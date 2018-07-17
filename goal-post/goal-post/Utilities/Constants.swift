@@ -10,6 +10,12 @@ import Foundation
 
 // Identifiers - Storyboard Segues
 let ID_SEGUE_TO_ADD_GOALS_VC        =   "toAddGoalsVC"
+let ID_SEGUE_TO_FINISH_GOALS_VC     =   "toFinishGoalsVC"
+
 
 // Identifiers - Cells
 let ID_REUSE_ID_GOAL_CELL           =   "goalCell"
+
+// Types
+
+
