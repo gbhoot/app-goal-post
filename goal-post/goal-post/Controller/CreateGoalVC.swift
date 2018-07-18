@@ -8,19 +8,23 @@
 
 import UIKit
 
-class CreateGoalVC: UIViewController {
+class CreateGoalVC: UIViewController, UITextViewDelegate {
     
     // Outlets
-    @IBOutlet weak var goalTextField: UITextField!
+    
+    @IBOutlet weak var goalTextView: UITextView!
     @IBOutlet weak var shortTermBtn: UIButton!
     @IBOutlet weak var longTermBtn: UIButton!
     @IBOutlet weak var nextBtn: UIButton!
+    
+    var goalType: GoalType!
     
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
         setupView()
+        setGoalType(goalType: .ShortTerm)
     }
 
     override func didReceiveMemoryWarning() {
@@ -30,38 +34,48 @@ class CreateGoalVC: UIViewController {
     
     func setupView() {
         nextBtn.isEnabled = false
+        nextBtn.bindToKeyboard()
+        
+        goalTextView.delegate = self
     }
     
-    func clearButtonStates() {
-        setupView()
-        shortTermBtn.isSelected = false
-        longTermBtn.isSelected = false
-    }
-    
-    func buttonSelected(whichBtn: UIButton) {
-        if whichBtn.isSelected == false {
-            clearButtonStates()
-            whichBtn.isSelected = true
-            nextBtn.isEnabled = true
+    func setGoalType(goalType: GoalType) {
+        if goalType == .LongTerm {
+            longTermBtn.setSelectedColor()
+            shortTermBtn.setDeselectedColor()
+            self.goalType = goalType
         } else {
-            clearButtonStates()
+            shortTermBtn.setSelectedColor()
+            longTermBtn.setDeselectedColor()
+            self.goalType = goalType
         }
     }
-
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        goalTextView.text = ""
+        goalTextView.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        
+        nextBtn.isEnabled = true
+    }
+    
     // IB-Actions
     @IBAction func shortTermBtnSelected(_ sender: Any) {
-        buttonSelected(whichBtn: shortTermBtn)
+        setGoalType(goalType: .ShortTerm)
     }
     
     @IBAction func longTermBtnSelected(_ sender: Any) {
-        buttonSelected(whichBtn: longTermBtn)
+        setGoalType(goalType: .LongTerm)
     }
     
     @IBAction func backBtnPressed(_ sender: Any) {
-        dismiss(animated: true, completion: nil)
+        dismissDetail()
     }
     
     @IBAction func nextBtnPressed(_ sender: Any) {
-        performSegue(withIdentifier: ID_SEGUE_TO_FINISH_GOALS_VC, sender: self)
+        if goalTextView.text != "" && goalTextView.text != "What is your goal?" {            
+            guard let finishGoalVC = storyboard?.instantiateViewController(withIdentifier: ID_SB_FINISH_GOAL_VC) as? FinishGoalVC else { return }
+            finishGoalVC.initData(description: goalTextView.text, type: goalType)
+            presentingViewController?.presentSecondaryDetail(finishGoalVC)
+        }
     }
 }

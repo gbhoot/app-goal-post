@@ -14,6 +14,8 @@ class GoalCell: UITableViewCell {
     @IBOutlet weak var goalNameLbl: UILabel!
     @IBOutlet weak var goalTypeLbl: UILabel!
     @IBOutlet weak var goalProgressLbl: UILabel!
+    @IBOutlet weak var completionView: UIView!
+    
     
     override func awakeFromNib() {
         super.awakeFromNib()
@@ -26,9 +28,15 @@ class GoalCell: UITableViewCell {
         // Configure the view for the selected state
     }
     
-    func configureCell(name: String, type: GoalType, goalProgressAmount: Int) {
-        self.goalNameLbl.text = name
-        self.goalTypeLbl.text = type.rawValue
-        self.goalProgressLbl.text = String(describing: goalProgressAmount)
+    func configureCell(goal: Goal) {
+        self.goalNameLbl.text = goal.goalName
+        self.goalTypeLbl.text = goal.goalType
+        self.goalProgressLbl.text = String(describing: goal.goalProgressValue)
+        
+        if goal.goalProgressValue == goal.goalCompletionValue {
+            self.completionView.isHidden = false
+        } else {
+            self.completionView.isHidden = true
+        }
     }
 }
